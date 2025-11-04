@@ -94,3 +94,9 @@ class TestDaytonaDataAnalysisToolIntegration(ToolsIntegrationTests):
         except Exception as e:
             pytest.fail(f"tool.close() raised an exception: {e}")
         assert tool._sandbox_uploaded_files == []
+
+    def test_install_python_packages(self, tool: DaytonaDataAnalysisTool) -> None:
+        package_name = "hello-world-py"
+        tool.install_python_packages(package_name)
+        response = tool._sandbox.process.exec(f"pip show {package_name}")
+        assert package_name in response.result

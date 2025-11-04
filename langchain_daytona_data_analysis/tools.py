@@ -2,7 +2,7 @@ import ast
 import os
 from io import StringIO
 from sys import version_info
-from typing import IO, Any, Callable, List, Optional, Type
+from typing import IO, Any, Callable, List, Optional, Type, Union
 
 from daytona import (  # type: ignore
     Daytona,
@@ -10,7 +10,9 @@ from daytona import (  # type: ignore
     ExecutionArtifacts,
     Sandbox,
 )
-from langchain_core.callbacks import CallbackManagerForToolRun  # type: ignore
+from langchain_core.callbacks import (  # type: ignore
+    CallbackManagerForToolRun,
+)
 from langchain_core.tools import BaseTool  # type: ignore
 from pydantic import BaseModel, Field, PrivateAttr  # type: ignore
 
@@ -18,12 +20,7 @@ from .unparse import Unparser  # type: ignore
 
 
 class DaytonaDataAnalysisToolInput(BaseModel):
-    """Input schema for DaytonaDataAnalysisTool.
-
-    This docstring is **not** part of what is sent to the model when performing tool
-    calling. The Field default values and descriptions **are** part of what is sent to
-    the model when performing tool calling.
-    """
+    """Input schema for DaytonaDataAnalysisTool."""
 
     data_analysis_python_code: str = Field(...,         
         examples=["print('Hello World')"],
@@ -45,7 +42,7 @@ You must send the whole script every time and print your outputs. \
 Script should be pure python code that can be evaluated. \
 It should be in python format NOT markdown. \
 The code should NOT be wrapped in backticks. \
-All python packages including requests, matplotlib, scipy, numpy, pandas, \
+All python packages including requests, matplotlib, scipy, numpy, pandas, seaborn \
 etc are available. Create and display chart using `plt.show()`."""
 
 class DaytonaDataAnalysisTool(BaseTool):  # type: ignore[override]
@@ -164,6 +161,15 @@ class DaytonaDataAnalysisTool(BaseTool):  # type: ignore[override]
         """Close and delete sandbox."""
         self._sandbox_uploaded_files = []
         self._daytonaClient.delete(self._sandbox)
+
+    def install_python_packages(self, package_names: Union[str, List[str]]) -> None:
+        """Install python packages in the sandbox."""
+        if isinstance(package_names, str):
+            packages_str = package_names
+        else:
+            packages_str = " ".join(package_names)
+        command = f"pip install {packages_str}"
+        self._sandbox.process.exec(command)
 
     def download_file(self, remote_path: str) -> bytes:
         """Download file from the sandbox."""
