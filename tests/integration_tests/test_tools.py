@@ -4,6 +4,7 @@ from typing import Type
 from unittest.mock import Mock
 
 import pytest  # type: ignore
+from daytona import ExecutionArtifacts  # type: ignore
 from langchain_tests.integration_tests import ToolsIntegrationTests  # type: ignore
 
 from langchain_daytona_data_analysis.tools import (
@@ -77,22 +78,15 @@ class TestDaytonaDataAnalysisToolIntegration(ToolsIntegrationTests):
 
         code = "print('Integration test')"
         result = tool._run(code)
-        assert hasattr(result, "stdout")
-        assert isinstance(result.stdout, str)
-        assert hasattr(result, "charts")
-        charts = getattr(result, "charts")
-        assert charts is None or isinstance(charts, list)
+        assert isinstance(result, ExecutionArtifacts)
         assert "Integration test" in result.stdout or result.stdout == ""
 
         assert mock_on_result.called
         args, kwargs = mock_on_result.call_args
         result_arg = args[0]
 
-        assert hasattr(result_arg, "stdout")
-        assert isinstance(result_arg.stdout, str)
-        assert hasattr(result_arg, "charts")
-        charts = getattr(result_arg, "charts")
-        assert charts is None or isinstance(charts, list)
+        assert isinstance(result_arg, ExecutionArtifacts)
+        assert "Integration test" in result_arg.stdout or result_arg.stdout == ""
 
     def test_close(self, tool: DaytonaDataAnalysisTool) -> None:
         try:

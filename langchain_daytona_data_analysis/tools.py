@@ -4,10 +4,15 @@ from io import StringIO
 from sys import version_info
 from typing import IO, Any, Callable, List, Optional, Type
 
-from daytona import Chart, Daytona, DaytonaConfig, Sandbox  # type: ignore
+from daytona import (  # type: ignore
+    Daytona,
+    DaytonaConfig,
+    ExecutionArtifacts,
+    Sandbox,
+)
 from langchain_core.callbacks import CallbackManagerForToolRun  # type: ignore
 from langchain_core.tools import BaseTool  # type: ignore
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr  # type: ignore
+from pydantic import BaseModel, Field, PrivateAttr  # type: ignore
 
 from .unparse import Unparser  # type: ignore
 
@@ -33,17 +38,6 @@ class SandboxUploadedFile(BaseModel):
     name: str
     remote_path: str
     description: str
-
-class ExecutionArtifacts(BaseModel):
-    """Artifacts from the command execution.
-    Attributes:
-        stdout (str): Standard output from the command
-        charts (Optional[List[Chart]]): List of chart metadata from matplotlib
-    """
-    stdout: str
-    charts: Optional[List[Chart]] = None
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 tool_base_description = """Evaluates python code in a sandbox environment. \
 The environment is long running and exists across multiple executions. \
