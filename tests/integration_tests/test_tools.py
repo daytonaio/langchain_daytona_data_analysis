@@ -4,7 +4,7 @@ from typing import Type
 from unittest.mock import Mock
 
 import pytest  # type: ignore
-from daytona import ExecutionArtifacts  # type: ignore
+from daytona import ExecuteResponse, ExecutionArtifacts  # type: ignore
 from langchain_tests.integration_tests import ToolsIntegrationTests  # type: ignore
 
 from langchain_daytona_data_analysis.tools import (
@@ -98,5 +98,5 @@ class TestDaytonaDataAnalysisToolIntegration(ToolsIntegrationTests):
     def test_install_python_packages(self, tool: DaytonaDataAnalysisTool) -> None:
         package_name = "hello-world-py"
         tool.install_python_packages(package_name)
-        response = tool._sandbox.process.exec(f"pip show {package_name}")
+        response: ExecuteResponse = tool._sandbox.process.exec(f"pip show {package_name}")
         assert package_name in response.result
