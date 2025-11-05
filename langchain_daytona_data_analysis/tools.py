@@ -125,7 +125,7 @@ class DaytonaDataAnalysisTool(BaseTool):  # type: ignore[override]
     _on_result = PrivateAttr()
 
     @property
-    def uploaded_files_description(self) -> str:
+    def _uploaded_files_description(self) -> str:
         if len(self._sandbox_uploaded_files) == 0:
             return ""
         lines = ["The following files available in the sandbox:"]
@@ -161,7 +161,7 @@ class DaytonaDataAnalysisTool(BaseTool):  # type: ignore[override]
     def _run(
         self, data_analysis_python_code: str, run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str | ExecutionArtifacts:
-        python_code_to_exec = self.add_last_line_print(data_analysis_python_code)
+        python_code_to_exec = self._add_last_line_print(data_analysis_python_code)
 
         execution = self._sandbox.process.code_run(python_code_to_exec)
         if execution.exit_code != 0:
@@ -210,7 +210,7 @@ class DaytonaDataAnalysisTool(BaseTool):  # type: ignore[override]
             description=description,
         )
         self._sandbox_uploaded_files.append(sandboxFile)
-        self.description = tool_base_description + "\n" + self.uploaded_files_description
+        self.description = tool_base_description + "\n" + self._uploaded_files_description
         return sandboxFile
 
     def remove_uploaded_file(self, uploaded_file: SandboxUploadedFile) -> None:
@@ -221,7 +221,7 @@ class DaytonaDataAnalysisTool(BaseTool):  # type: ignore[override]
             for f in self._sandbox_uploaded_files
             if f.remote_path != uploaded_file.remote_path
         ]
-        self.description = tool_base_description + "\n" + self.uploaded_files_description
+        self.description = tool_base_description + "\n" + self._uploaded_files_description
 
     def get_sandbox(self) -> Sandbox:
         """Get the current sandbox instance."""
@@ -238,7 +238,7 @@ class DaytonaDataAnalysisTool(BaseTool):  # type: ignore[override]
             source_code = ast.unparse(tree)
         return source_code
     
-    def add_last_line_print(self, code: str) -> str:
+    def _add_last_line_print(self, code: str) -> str:
         """Add print statement to the last line if it's missing.
 
         Sometimes, the LLM-generated code doesn't have `print(variable_name)`, instead the

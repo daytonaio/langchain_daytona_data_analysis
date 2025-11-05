@@ -44,14 +44,14 @@ class TestDaytonaDataAnalysisToolIntegration(ToolsIntegrationTests):
         assert uploaded_file.description == file_description
         assert uploaded_file.remote_path.endswith(file_name)
 
-        expected_description = tool_base_description + "\n" + tool.uploaded_files_description
+        expected_description = tool_base_description + "\n" + tool._uploaded_files_description
         assert tool.description == expected_description 
 
         expected_uploaded_files_description = (
             "The following files available in the sandbox:\n"
             f"- path: `{uploaded_file.remote_path}` \n description: `{uploaded_file.description}`"
         )
-        assert tool.uploaded_files_description == expected_uploaded_files_description 
+        assert tool._uploaded_files_description == expected_uploaded_files_description 
 
         downloaded = tool.download_file(uploaded_file.remote_path)
         assert downloaded == file_content
@@ -66,7 +66,7 @@ class TestDaytonaDataAnalysisToolIntegration(ToolsIntegrationTests):
         tool.remove_uploaded_file(uploaded_file)
 
         assert tool._sandbox_uploaded_files == []
-        assert tool.uploaded_files_description == ""
+        assert tool._uploaded_files_description == ""
         assert tool.description.rstrip() == tool_base_description.rstrip()
 
         with pytest.raises(Exception):
