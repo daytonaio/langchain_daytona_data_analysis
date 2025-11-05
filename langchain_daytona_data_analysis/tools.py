@@ -36,7 +36,7 @@ class SandboxUploadedFile(BaseModel):
     remote_path: str
     description: str
 
-tool_base_description = """Evaluates python code in a sandbox environment. \
+tool_base_description = """Tool for running python code in a sandboxed environment for data analysis. \
 The environment is long running and exists across multiple executions. \
 You must send the whole script every time and print your outputs. \
 Script should be pure python code that can be evaluated. \
