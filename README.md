@@ -92,3 +92,108 @@ model = ChatAnthropic(
 
 agent = create_agent(model, tools=[tool])
 ```
+
+## API Reference
+
+The following public methods are available on `DaytonaDataAnalysisTool`:
+
+### `download_file(remote_path)`
+Downloads a file from the sandbox by its remote path.
+- `remote_path`: `str` — Path to the file in the sandbox.
+- **Returns:** `bytes` — File contents.
+
+**Example:**
+```python
+# Download a file from the sandbox
+file_bytes = tool.download_file("/home/daytona/results.csv")
+```
+
+---
+
+### `upload_file(file, description)`
+Uploads a file to the sandbox. The file is placed in `/home/daytona/`.
+- `file`: `IO` — File-like object to upload.
+- `description`: `str` — Description of the file, explaining its purpose and the type of data it contains.
+- **Returns:** [`SandboxUploadedFile`](#sandboxuploadedfile) — Metadata about the uploaded file.
+
+**Example:**
+Suppose you want to analyze sales data for a retail business. You have a CSV file named `sales_q3_2025.csv` containing columns like `transaction_id`, `date`, `product`, `quantity`, and `revenue`. You want to upload this file and provide a description that gives context for the analysis.
+
+```python
+with open("sales_q3_2025.csv", "rb") as f:
+    uploaded = tool.upload_file(
+        f,
+        "CSV file containing Q3 2025 retail sales transactions. Columns: transaction_id, date, product, quantity, revenue."
+    )
+```
+
+---
+
+### `remove_uploaded_file(uploaded_file)`
+Removes a previously uploaded file from the sandbox.
+- `uploaded_file`: [`SandboxUploadedFile`](#sandboxuploadedfile) — The file to remove.
+
+**Example:**
+```python
+# Remove an uploaded file
+tool.remove_uploaded_file(uploaded)
+```
+
+---
+
+### `get_sandbox()`
+Gets the current sandbox instance.
+- **Returns:** [`Sandbox`](#sandbox) — Sandbox instance.
+
+This method provides access to the Daytona sandbox instance, allowing you to inspect sandbox properties and metadata, as well as perform any sandbox-related operations. For details on available attributes and methods, see the [Sandbox](#sandbox) data structure section below.
+
+**Example:**
+```python
+sandbox = tool.get_sandbox()
+```
+
+---
+
+### `install_python_packages(package_names)`
+Installs one or more Python packages in the sandbox using pip.
+- `package_names`: `str` or `List[str]` — Name(s) of the package(s) to install.
+
+> **Note:** The list of preinstalled packages in a sandbox can be found at [Daytona Default Snapshot documentation](https://www.daytona.io/docs/en/snapshots/#default-snapshot).
+
+**Example:**
+```python
+# Install a single package
+tool.install_python_packages("pandas")
+
+# Install multiple packages
+tool.install_python_packages(["numpy", "matplotlib"])
+```
+
+---
+
+### `close()`
+Closes and deletes the sandbox environment.
+
+> **Note:** Call this method when you are finished with all data analysis tasks to properly clean up resources and avoid unnecessary usage.
+
+**Example:**
+```python
+# Close the sandbox and clean up
+tool.close()
+```
+
+---
+
+## Data Structures
+
+### SandboxUploadedFile
+Represents metadata about a file uploaded to the sandbox.
+
+- `name`: `str` — Name of the uploaded file in the sandbox
+- `remote_path`: `str` — Full path to the file in the sandbox
+- `description`: `str` — Description provided during upload
+
+### Sandbox
+Represents a Daytona sandbox instance.
+
+See the full structure and API in the [Daytona Python SDK Sandbox documentation](https://www.daytona.io/docs/en/python-sdk/sync/sandbox/#sandbox).
