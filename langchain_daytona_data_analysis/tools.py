@@ -48,13 +48,31 @@ etc are available. Create and display chart using `plt.show()`."""
 class DaytonaDataAnalysisTool(BaseTool):  # type: ignore[override]
     """Tool for running python code in a sandboxed environment for data analysis.
 
-    Setup:
-        Install ``daytona`` and set environment variable ``DAYTONA_API_KEY``(or pass it as parameter).
 
-        .. code-block:: bash
+     Setup:
+          Install ``daytona`` and set credentials for Daytona:
 
-            pip install -U daytona
-            export DAYTONA_API_KEY="your-api-key"
+
+          1. Set the environment variable:
+              .. code-block:: bash
+
+                  export DAYTONA_API_KEY="your-api-key"
+
+          2. Or, add it to a `.env` file in your project root:
+              .. code-block:: bash
+
+                  DAYTONA_API_KEY=your-api-key
+
+          3. Or, pass it directly as a parameter:
+              .. code-block:: python
+
+                  tool = DaytonaDataAnalysisTool(daytona_api_key="your-api-key")
+
+          Then install the package:
+              .. code-block:: bash
+
+                  pip install -U daytona
+
 
     Key init args:
         daytona_api_key: Optional[str]
@@ -65,6 +83,7 @@ class DaytonaDataAnalysisTool(BaseTool):  # type: ignore[override]
             ExecutionArtifacts attributes:
                 stdout (str): Standard output from the command
                 charts (Optional[List[Chart]]): List of chart metadata from matplotlib
+
 
     Instantiation:
         .. code-block:: python
