@@ -7,10 +7,6 @@ This package provides the `DaytonaDataAnalysisTool` - LangChain tool integration
 ```bash
 pip install -U langchain-daytona-data-analysis
 ```
-The `daytona` package must also be installed to use `DaytonaDataAnalysisTool`:
-```bash
-pip install -U daytona
-```
 
 You must configure credentials for Daytona. You can do this in one of three ways:
 
